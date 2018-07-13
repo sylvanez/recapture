@@ -12,7 +12,6 @@ class StaticMethods {
         sInstance.mOverlay = overlay;
     }
 
-
     static void pickImage(){
         sInstance.mMainActivity.pickImage();
     }

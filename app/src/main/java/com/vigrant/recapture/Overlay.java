@@ -39,7 +39,7 @@ public class Overlay extends Service {
         mLayout = new LinearLayout(this);
         StaticMethods.mainActivity().getLayoutInflater().inflate(R.layout.overlay, mLayout);
 
-        Button buttonStop = mLayout.findViewById(R.id.overlay_button_close);
+        Button buttonStop = (Button)mLayout.findViewById(R.id.overlay_button_close);
         buttonStop.setText("close");
 
         buttonStop.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +50,7 @@ public class Overlay extends Service {
             }
         });
 
-        Button buttonLoad = mLayout.findViewById(R.id.overlay_button_load);
+        Button buttonLoad = (Button)mLayout.findViewById(R.id.overlay_button_load);
         buttonLoad.setText("load image");
 
         buttonLoad.setOnClickListener(new View.OnClickListener() {
