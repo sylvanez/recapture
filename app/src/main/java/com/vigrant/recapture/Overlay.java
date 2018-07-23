@@ -3,19 +3,13 @@ package com.vigrant.recapture;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 public class Overlay extends Service {
@@ -40,47 +34,63 @@ public class Overlay extends Service {
         mLayout = new LinearLayout(this);
         StaticMethods.mainActivity().getLayoutInflater().inflate(R.layout.overlay, mLayout);
 
-        Button buttonStop = (Button)mLayout.findViewById(R.id.overlay_button_close);
-        buttonStop.setText("close");
 
-        buttonStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mWindowManager.removeView(mLayout);
-                stopSelf();
-            }
-        });
-
-        Button buttonLoad = (Button)mLayout.findViewById(R.id.overlay_button_load);
-        buttonLoad.setText("load image");
-
-        buttonLoad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                StaticMethods.pickImage();
-            }
-        });
-
-        int LAYOUT_FLAG;
+        int LAYOUT_TYPE;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            LAYOUT_TYPE = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+            LAYOUT_TYPE = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
-        WindowManager.LayoutParams layoutParamsWM = new WindowManager.LayoutParams(600, 400, LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-        layoutParamsWM.x = 0;
-        layoutParamsWM.y = 0;
-        layoutParamsWM.gravity = Gravity.CENTER;
+        mLayoutParamsWM = new WindowManager.LayoutParams(LAYOUT_TYPE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT);
+        mLayoutParamsWM.x = 0;
+        mLayoutParamsWM.y = 0;
+        mLayoutParamsWM.gravity = Gravity.CENTER;
 
-        mWindowManager.addView(mLayout, layoutParamsWM);
+        mWindowManager.addView(mLayout, mLayoutParamsWM);
+        StaticMethods.mainActivity().onOverlayStarted();
     }
 
     void displayImage(Bitmap bitmap){
-        ((ImageView)mLayout.findViewById(R.id.overlay_image)).setImageBitmap(bitmap);
+        //((ImageView)mLayout.findViewById(R.id.overlay_image)).setImageBitmap(bitmap);
+        if(null != mImageZoom){
+            ((FrameLayout)mLayout.findViewById(R.id.overlay_layout_main)).removeView(mImageZoom);
+        }
+
+        mImageZoom = new ImageZoom(bitmap);
+        ((FrameLayout)mLayout.findViewById(R.id.overlay_layout_main)).addView(mImageZoom);
+
+
         System.out.println("image of size " + bitmap.getWidth() + "x" + bitmap.getHeight() + " set");
         mLayout.invalidate();
     }
 
+    void stop(){
+        mWindowManager.removeView(mLayout);
+        stopSelf();
+    }
+
+    void rotateLeft(){
+        mImageZoom.rotateLeft();
+    }
+
+    void rotateRight(){
+        mImageZoom.rotateRight();
+    }
+
+    void left(){
+        mPaddingLeft -= 10;
+        mLayout.setPadding(mPaddingLeft, 0, 0, 0);
+    }
+
+    void right(){
+        mPaddingLeft += 10;
+        mLayout.setPadding(mPaddingLeft, 0, 0, 0);
+    }
+
+    private ImageZoom mImageZoom;
+    private WindowManager.LayoutParams mLayoutParamsWM;
+
+    private int mPaddingLeft = 0;
 
 }

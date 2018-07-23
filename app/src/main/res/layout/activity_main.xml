@@ -9,11 +9,80 @@
     tools:context=".MainActivity">
 
 
-    <Button
-        android:id="@+id/button_start"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="start"
-        />
+        android:orientation="vertical"
+        >
+
+        <Button
+            android:id="@+id/button_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="load image"
+            />
+
+        <LinearLayout
+            android:id="@+id/main_layout_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:orientation="horizontal">
+
+                 <Button
+                     android:id="@+id/main_button_stop"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="stop"
+                     />
+
+             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/main_button_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="left"
+                    />
+
+                <Button
+                    android:id="@+id/main_button_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="right"
+                    />
+
+                <Button
+                    android:id="@+id/main_button_rot_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="rot left"
+                    />
+
+                <Button
+                    android:id="@+id/main_button_rot_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="rot right"
+                    />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

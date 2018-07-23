@@ -24,6 +24,10 @@ class StaticMethods {
         return sInstance.mMainActivity;
     }
 
+    static Overlay overlay(){
+        return sInstance.mOverlay;
+    }
+
     private MainActivity mMainActivity;
     private Overlay mOverlay;
 

@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_CAN_DRAW = 9001;
     public final static int REQUEST_LOAD_IMAGE = 9002;
 
+    private Bitmap mImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,15 +25,49 @@ public class MainActivity extends AppCompatActivity {
 
         StaticMethods.setMainActivity(this);
 
-        findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button_load).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startService(new Intent(MainActivity.this, Overlay.class));
+                StaticMethods.pickImage();
             }
         });
 
         checkDrawOverlayPermission();
 
+        findViewById(R.id.main_button_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StaticMethods.overlay().stop();
+            }
+        });
+
+        findViewById(R.id.main_button_rot_left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StaticMethods.overlay().rotateLeft();
+            }
+        });
+
+        findViewById(R.id.main_button_rot_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StaticMethods.overlay().rotateRight();
+            }
+        });
+
+        findViewById(R.id.main_button_left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StaticMethods.overlay().left();
+            }
+        });
+
+        findViewById(R.id.main_button_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StaticMethods.overlay().right();
+            }
+        });
     }
 
 
@@ -72,20 +108,27 @@ public class MainActivity extends AppCompatActivity {
                 Uri photoUri = data.getData();
                 // Do something with the photo based on Uri
                 try{
-                    Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+                    startService(new Intent(MainActivity.this, Overlay.class));
 
-                    StaticMethods.displayImage(selectedImage);
+                    mImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                 } catch(Exception e){
                     e.printStackTrace();
                 }
             } else {
                 System.out.println("request to load image, no data provided");
             }
-
         }
     }
 
 
+    void onOverlayStarted(){
+        if(null != mImage){
+            StaticMethods.displayImage(mImage);
+
+            findViewById(R.id.main_layout_buttons).setVisibility(View.VISIBLE);
+        }
+
+    }
 
 
 }

@@ -5,27 +5,10 @@
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/overlay_layout_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/overlay_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <Button
-            android:id="@+id/overlay_button_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            />
-
-        <Button
-            android:id="@+id/overlay_button_load"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            />
+        android:layout_height="match_parent"
+        >
 
     </FrameLayout>
 
