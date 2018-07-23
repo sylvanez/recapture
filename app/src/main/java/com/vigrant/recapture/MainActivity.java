@@ -33,41 +33,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         checkDrawOverlayPermission();
-
-        findViewById(R.id.main_button_stop).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StaticMethods.overlay().stop();
-            }
-        });
-
-        findViewById(R.id.main_button_rot_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StaticMethods.overlay().rotateLeft();
-            }
-        });
-
-        findViewById(R.id.main_button_rot_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StaticMethods.overlay().rotateRight();
-            }
-        });
-
-        findViewById(R.id.main_button_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StaticMethods.overlay().left();
-            }
-        });
-
-        findViewById(R.id.main_button_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StaticMethods.overlay().right();
-            }
-        });
     }
 
 
@@ -125,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         if(null != mImage){
             StaticMethods.displayImage(mImage);
 
-            findViewById(R.id.main_layout_buttons).setVisibility(View.VISIBLE);
+            //findViewById(R.id.main_layout_buttons).setVisibility(View.VISIBLE);
         }
 
     }
