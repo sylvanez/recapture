@@ -3,17 +3,21 @@ package com.vigrant.recapture;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Space;
+import android.widget.TextView;
 
 public class Overlay extends Service {
 
@@ -54,10 +58,12 @@ public class Overlay extends Service {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        mScaleDP = displayMetrics.density;
         WindowManager.LayoutParams layoutParamsButtons = new WindowManager.LayoutParams(displayMetrics.widthPixels, 150, 0, displayMetrics.heightPixels - 150, LAYOUT_TYPE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         layoutParamsButtons.gravity = Gravity.CENTER;
 
         LinearLayout layoutButtons = new LinearLayout(this);
+        layoutButtons.setGravity(Gravity.CENTER);
 
         addButton("stop", new Runnable() {
             @Override
@@ -80,17 +86,31 @@ public class Overlay extends Service {
             }
         }, layoutButtons);
 
-        addButton("left", new Runnable() {
+        addButton("<<", new Runnable() {
             @Override
             public void run() {
                 left();
             }
         }, layoutButtons);
 
-        addButton("right", new Runnable() {
+        addButton(">>", new Runnable() {
             @Override
             public void run() {
                 right();
+            }
+        }, layoutButtons);
+
+        addButton("up", new Runnable() {
+            @Override
+            public void run() {
+                up();
+            }
+        }, layoutButtons);
+
+        addButton("dn", new Runnable() {
+            @Override
+            public void run() {
+                down();
             }
         }, layoutButtons);
 
@@ -114,17 +134,32 @@ public class Overlay extends Service {
         StaticMethods.mainActivity().onOverlayStarted();
     }
 
+    int getPixelsForDP(int dp){
+        return (int) (mScaleDP * (float)(dp) + 0.5f);
+    }
+
 
     private void addButton(String text, final Runnable onClick, LinearLayout layout){
-        Button buttonAlphaDec = new Button(this);
-        buttonAlphaDec.setText(text);
-        buttonAlphaDec.setOnClickListener(new View.OnClickListener() {
+        TextView button = new TextView(this);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+
+        button.setHeight(getPixelsForDP(28));
+        button.setPadding(getPixelsForDP(8), getPixelsForDP(4), getPixelsForDP(8), getPixelsForDP(4));
+        button.setText(text);
+        button.setBackgroundColor(Color.rgb(120, 120, 120));
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClick.run();
             }
         });
-        layout.addView(buttonAlphaDec);
+
+        layout.addView(button);
+
+        Space sp = new Space(this);
+        sp.setMinimumWidth(getPixelsForDP(8));
+        sp.setMinimumHeight(getPixelsForDP(8));
+        layout.addView(sp);
     }
 
 
@@ -147,17 +182,29 @@ public class Overlay extends Service {
 
     void left(){
         mPaddingLeft -= 10;
-        mLayout.setPadding(mPaddingLeft, 0, 0, 0);
+        mLayout.setPadding(mPaddingLeft, mPaddingTop, 0, 0);
     }
 
     void right(){
         mPaddingLeft += 10;
-        mLayout.setPadding(mPaddingLeft, 0, 0, 0);
+        mLayout.setPadding(mPaddingLeft, mPaddingTop, 0, 0);
+    }
+
+    void up(){
+        mPaddingTop  -= 10;
+        mLayout.setPadding(mPaddingLeft, mPaddingTop, 0, 0);
+    }
+
+    void down(){
+        mPaddingTop += 10;
+        mLayout.setPadding(mPaddingLeft, mPaddingTop, 0, 0);
     }
 
     private ImageZoom mImageZoom;
     private WindowManager.LayoutParams mLayoutParamsWM;
+    private float mScaleDP = 1.0f;
 
     private int mPaddingLeft = 0;
+    private int mPaddingTop = 0;
 
 }
