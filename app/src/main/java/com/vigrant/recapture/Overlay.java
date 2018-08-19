@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,7 +24,7 @@ public class Overlay extends Service {
 
 
     private WindowManager mWindowManager;
-    private LinearLayout mLayout;
+    private FrameLayout mLayout;
 
     @Nullable
     @Override
@@ -38,7 +39,7 @@ public class Overlay extends Service {
 
         mWindowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
 
-        mLayout = new LinearLayout(this);
+        mLayout = new FrameLayout(this);
         StaticMethods.mainActivity().getLayoutInflater().inflate(R.layout.overlay, mLayout);
 
 
@@ -58,109 +59,30 @@ public class Overlay extends Service {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
-        mScaleDP = displayMetrics.density;
-        WindowManager.LayoutParams layoutParamsButtons = new WindowManager.LayoutParams(displayMetrics.widthPixels, 150, 0, displayMetrics.heightPixels - 150, LAYOUT_TYPE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+        //mScaleDP = displayMetrics.density;
+        WindowManager.LayoutParams layoutParamsButtons = new WindowManager.LayoutParams(displayMetrics.widthPixels / 2, 150, 0, displayMetrics.heightPixels - 150, LAYOUT_TYPE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSPARENT);
         layoutParamsButtons.gravity = Gravity.CENTER;
 
-        LinearLayout layoutButtons = new LinearLayout(this);
-        layoutButtons.setGravity(Gravity.CENTER);
-
-        addButton("stop", new Runnable() {
+        DragLayout dragLayout = new DragLayout(this, new Runnable() {
             @Override
             public void run() {
-                stop();
+                if (null != mImageZoom) mImageZoom.alphaDec();
             }
-        }, layoutButtons);
-
-        addButton("a++", new Runnable() {
+        }, new Runnable() {
             @Override
             public void run() {
-                mImageZoom.alphaInc();
+                if (null != mImageZoom) mImageZoom.alphaInc();
             }
-        }, layoutButtons);
+        });
+        dragLayout.setGravity(Gravity.CENTER);
+        dragLayout.setBackgroundColor(Color.rgb(255, 255, 255));
+        dragLayout.setAlpha(0.3f);
 
-        addButton("a--", new Runnable() {
-            @Override
-            public void run() {
-                mImageZoom.alphaDec();
-            }
-        }, layoutButtons);
-
-        addButton("<<", new Runnable() {
-            @Override
-            public void run() {
-                left();
-            }
-        }, layoutButtons);
-
-        addButton(">>", new Runnable() {
-            @Override
-            public void run() {
-                right();
-            }
-        }, layoutButtons);
-
-        addButton("up", new Runnable() {
-            @Override
-            public void run() {
-                up();
-            }
-        }, layoutButtons);
-
-        addButton("dn", new Runnable() {
-            @Override
-            public void run() {
-                down();
-            }
-        }, layoutButtons);
-
-        addButton("in", new Runnable() {
-            @Override
-            public void run() {
-                mImageZoom.zoomIn();
-            }
-        }, layoutButtons);
-
-        addButton("out", new Runnable() {
-            @Override
-            public void run() {
-                mImageZoom.zoomOut();
-            }
-        }, layoutButtons);
-
-
-        mWindowManager.addView(layoutButtons, layoutParamsButtons);
+        mWindowManager.addView(dragLayout, layoutParamsButtons);
 
         StaticMethods.mainActivity().onOverlayStarted();
     }
 
-    int getPixelsForDP(int dp){
-        return (int) (mScaleDP * (float)(dp) + 0.5f);
-    }
-
-
-    private void addButton(String text, final Runnable onClick, LinearLayout layout){
-        TextView button = new TextView(this);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-
-        button.setHeight(getPixelsForDP(28));
-        button.setPadding(getPixelsForDP(8), getPixelsForDP(4), getPixelsForDP(8), getPixelsForDP(4));
-        button.setText(text);
-        button.setBackgroundColor(Color.rgb(120, 120, 120));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClick.run();
-            }
-        });
-
-        layout.addView(button);
-
-        Space sp = new Space(this);
-        sp.setMinimumWidth(getPixelsForDP(8));
-        sp.setMinimumHeight(getPixelsForDP(8));
-        layout.addView(sp);
-    }
 
 
     void displayImage(Bitmap bitmap){
@@ -200,9 +122,16 @@ public class Overlay extends Service {
         mLayout.setPadding(mPaddingLeft, mPaddingTop, 0, 0);
     }
 
-    private ImageZoom mImageZoom;
+    void zoomIn(){
+        mImageZoom.zoomIn();
+    }
+
+    void zoomOut(){
+        mImageZoom.zoomOut();
+    }
+
+    ImageZoom mImageZoom;
     private WindowManager.LayoutParams mLayoutParamsWM;
-    private float mScaleDP = 1.0f;
 
     private int mPaddingLeft = 0;
     private int mPaddingTop = 0;

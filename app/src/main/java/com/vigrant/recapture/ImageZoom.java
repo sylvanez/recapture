@@ -38,14 +38,14 @@ class ImageZoom extends ImageView {
     }
 
     void alphaInc(){
-        mAlpha += 10;
+        mAlpha += 5;
         if(mAlpha > 255) mAlpha = 255;
         mPaint.setAlpha(mAlpha);
         invalidate();
     }
 
     void alphaDec(){
-        mAlpha -= 10;
+        mAlpha -= 5;
         if(mAlpha < 0) mAlpha = 0;
         mPaint.setAlpha(mAlpha);
         invalidate();
